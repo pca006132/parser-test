@@ -1,11 +1,8 @@
-import {Node, Parser, Edit, ParserResult, LintResult } from "./types";
+import {Node, Parser, Edit, ParserResult, LintResult} from "./types";
 
 class SequenceNode extends Node {
     readonly length: number;
-    constructor(
-        id: number,
-        readonly nodes: Node[]
-    ) {
+    constructor(id: number, readonly nodes: Node[]) {
         super(id);
         this.length = this.nodes.map(v => v.getLength()).reduce((acc, v) => acc + v, 0);
     }
@@ -41,7 +38,7 @@ export class SequenceParser implements Parser {
             }
         }
 
-        let lints: LintResult = { errors: [], warnings: [] };
+        let lints: LintResult = {errors: [], warnings: []};
         let nodes: Node[] = [];
         let offset = 0;
 
@@ -50,19 +47,10 @@ export class SequenceParser implements Parser {
             let length = result.node.getLength();
             edit = result.edit;
             nodes.push(result.node);
-            lints.errors = lints.errors.concat(result.lint.errors.map(v => ({
-                offset: v.offset + offset,
-                length: v.length,
-                message: v.message
-            })));
-            lints.warnings = lints.warnings.concat(result.lint.warnings.map(v => ({
-                offset: v.offset + offset,
-                length: v.length,
-                message: v.message
-            })));
+            lints.errors = lints.errors.concat(result.lint.errors.map(v => {v.offset += offset; return v;}));
+            lints.warnings = lints.warnings.concat(result.lint.warnings.map(v => {v.offset += offset; return v;}));
             if (line.length === 0 && result.lint.errors.some(v => v.length === 0)) {
-                // this should indicate missing element, no need to parse
-                // further
+                // this should indicate missing element, no need to parse further
                 break;
             }
             offset += length;
