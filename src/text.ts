@@ -1,8 +1,8 @@
 import {Edit, ParserResult, LintResult, Node, Parser} from "./types";
 
 class TextNode extends Node {
-    constructor(id: number, level: number, readonly text: string) {
-        super(id, level);
+    constructor(id: number, readonly text: string) {
+        super(id);
     }
 
     getStr(): string {
@@ -25,7 +25,7 @@ export type TextParserConfig = {
 export class TextParser implements Parser {
     constructor(readonly config: TextParserConfig) {}
 
-    parse(edit: Edit, line: string, level: number, node?: Node): ParserResult {
+    parse(edit: Edit, line: string, node?: Node): ParserResult {
         let replacedLength = edit.offset + edit.replacedLength;
         if (node !== undefined) {
             replacedLength -= node.getLength();
@@ -53,7 +53,7 @@ export class TextParser implements Parser {
         let text = line.substr(0, length);
         return {
             lint: this.config.validator(text),
-            node: new TextNode(this.config.id, level, text),
+            node: new TextNode(this.config.id, text),
             edit: {
                 offset: 0,
                 replacedLength: replacedLength,

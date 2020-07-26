@@ -4,10 +4,9 @@ class SequenceNode extends Node {
     readonly length: number;
     constructor(
         id: number,
-        level: number,
         readonly nodes: Node[]
     ) {
-        super(id, level);
+        super(id);
         this.length = this.nodes.map(v => v.getLength()).reduce((acc, v) => acc + v, 0);
     }
     getStr() {
@@ -20,7 +19,7 @@ class SequenceNode extends Node {
 
 export class SequenceParser implements Parser {
     constructor(readonly id: number, readonly parsers: Parser[]) {}
-    parse(edit: Edit, line: string, level: number, node?: Node): ParserResult {
+    parse(edit: Edit, line: string, node?: Node): ParserResult {
         function getNode(i: number) {
             if (node === undefined)
                 return undefined;
@@ -47,7 +46,7 @@ export class SequenceParser implements Parser {
         let offset = 0;
 
         for (let i = 0; i < this.parsers.length; i++) {
-            let result = this.parsers[i].parse(edit, line, level + 1, getNode(i));
+            let result = this.parsers[i].parse(edit, line, getNode(i));
             let length = result.node.getLength();
             edit = result.edit;
             nodes.push(result.node);
@@ -72,7 +71,7 @@ export class SequenceParser implements Parser {
 
         return {
             lint: lints,
-            node: new SequenceNode(this.id, level, nodes),
+            node: new SequenceNode(this.id, nodes),
             edit: edit
         };
     }

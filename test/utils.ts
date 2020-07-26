@@ -35,7 +35,7 @@ export function testRunner(edits: [number, number, string][], parser: Parser) {
             offset: start,
             replacedLength: length,
             replacementLength: text.length
-        }, line, 0, node);
+        }, line, node);
         node = result.node;
         console.log(`Line: ${line}`);
         console.log(node);

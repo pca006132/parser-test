@@ -22,13 +22,13 @@ export type ParserResult = {
 }
 
 export abstract class Node {
-    constructor(readonly id: number, readonly level: number) {}
+    constructor(readonly id: number) {}
     abstract getStr(): string;
     abstract getLength(): number;
 }
 
 export interface Parser {
-    parse(edit: Edit, line: string, level: number, node?: Node): ParserResult;
+    parse(edit: Edit, line: string, node?: Node): ParserResult;
 }
 
 
